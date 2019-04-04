@@ -1,0 +1,17 @@
+{
+  "class": "AS3",
+  "action": "deploy",
+  "persist": true,
+  "declaration": {
+    "class": "ADC",
+    "schemaVersion": "{{ schemaVersion }}",
+    "id": "{{ id }}",
+    "label": "{{ tenant }}",
+    "remark": "{{ remark }}",
+    "{{ tenant }}":
+    {
+{{ appList }}
+      "class": "Tenant"
+    }
+  }
+}

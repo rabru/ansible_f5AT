@@ -1,0 +1,25 @@
+      "{{ item.name }}": {
+          "class": "Application",
+          "template": "http",
+          "serviceMain": {
+             "class": "Service_HTTP",
+             "virtualAddresses": [
+                "{{ item.vip }}"
+             ],
+             "pool": "web_pool"
+          },
+          "web_pool": {
+             "class": "Pool",
+             "monitors": [
+                "http"
+             ],
+             "members": [{
+                "servicePort": {{ item.member_port }},
+                "serverAddresses": [
+{% for addr in item.member_addr %}
+              "{{ addr }}"{% if loop.last %}{% else %},{% endif%}
+{% endfor %}
+                ]
+             }]
+          }
+      }

@@ -1,0 +1,66 @@
+---
+- name: AS3 http setup 
+  hosts: "{{ target }}"
+  gather_facts: false
+  vars:
+    username: "admin"
+    password: "admin"
+
+  tasks:
+
+
+  - name: get auth token
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/shared/authn/login
+      method: POST
+      user: "{{ username }}"
+      password: "{{ password }}"
+      body: "{
+                \"username\":\"{{ username }}\",
+                \"password\":\"{{ password }}\",
+               \"loginProviderName\": \"local\"
+        }"
+      force_basic_auth: yes
+      status_code: 200
+      body_format: json
+      validate_certs: no
+    register: auth
+    delegate_to: localhost
+
+
+
+# Add or update Application Service
+###################################
+
+  - name: "Update Application"
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+      method: POST
+      headers:
+        X-F5-Auth-Token: "{{auth.json.token.token}}"
+      body: "{{ lookup('file', 'http_simple.json') }}"
+      force_basic_auth: no
+      status_code: 200,202
+      body_format: json
+      validate_certs: no
+    delegate_to: localhost
+    when: state == "present"
+
+
+# Remove Application Service
+############################
+  - name: Remove all Appilications
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+      method: POST
+      headers:
+        X-F5-Auth-Token: "{{auth.json.token.token}}"
+      body: "{{ lookup('file', 'remove_http_simple.json') }}"
+      force_basic_auth: no
+      status_code: 200,202
+      body_format: json
+      validate_certs: no
+    delegate_to: localhost
+    when: state == "absent"
+
+...    

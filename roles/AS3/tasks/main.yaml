@@ -1,0 +1,91 @@
+---
+##############################################
+# Add/Remove Application Service over BIG-IQ #
+##############################################
+
+- name: get auth token
+  uri:
+    url: https://{{ inventory_hostname }}/mgmt/shared/authn/login
+    method: POST
+    user: "{{ username }}"
+    password: "{{ password }}"
+    body: "{
+              \"username\":\"{{username}}\",
+              \"password\":\"{{password}}\",
+             \"loginProviderName\": \"local\"
+      }"
+    force_basic_auth: yes
+    status_code: 200
+    body_format: json
+    validate_certs: no
+  register: auth
+  delegate_to: localhost
+
+
+
+# Add or update Application Service
+###################################
+
+
+
+- name: Generate App List
+  set_fact:
+    appList: "{{ appList }}{{ lookup('template', 'AS3_multiApp_{{ item.template }}.j2') }},"
+  loop: "{{ apps }}"
+  vars:
+    appList: ""
+  when: state == "present"
+
+#- name: Debug appList
+#  debug:
+#    msg: "{{ appList }}"
+#  when: state == "present"
+
+#- name: Debug Result
+#  debug:
+#    msg: "{{ lookup('template', 'AS3_{{ j2template }}.j2')| to_json }}"
+#  when: state == "present"
+
+- name: "Create or modify Application"
+  uri:
+    url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+    method: POST
+    headers:
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    body: "{{ lookup('template', 'AS3_{{ j2template }}.j2') }}"
+    force_basic_auth: no
+    status_code: 200,202
+    body_format: json
+    validate_certs: no
+  delegate_to: localhost
+  ignore_errors: true
+  register: as3response
+  changed_when: as3response.json is defined and as3response.json.results is defined and as3response.json.results[0].message is defined and as3response.json.results[0].message != "no change"
+  when: state == "present"
+
+
+- name: Error analyses
+  debug:
+    msg: "Error: {{ as3response.json.errors }}"
+  when: as3response.json is defined and as3response.json.errors is defined
+
+# Remove Application Service
+############################
+- name: Remove all Appilications
+  uri:
+    url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+    method: POST
+    headers:
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    body: "{{ lookup('template', 'AS3_remove.j2') }}"
+    force_basic_auth: no
+    status_code: 200,202
+    body_format: json
+    validate_certs: no
+  delegate_to: localhost
+  register: as3response
+  changed_when: as3response.json is defined and as3response.json.results is defined and as3response.json.results[0].message is defined and as3response.json.results[0].message != "no change"
+  when: state == "absent"
+
+
+...

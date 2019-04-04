@@ -1,0 +1,40 @@
+{
+   "class": "AS3",
+   "action": "deploy",
+   "persist": true,
+   "declaration": {
+      "class": "ADC",
+      "schemaVersion": "3.0.0",
+      "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d_{{ tenant }}",
+      "label": "{{ tenant }}",
+      "remark": "Simple HTTP application with RR pool",
+      "{{ tenant }}": {
+         "class": "Tenant",
+         "{{ appName }}": {
+            "class": "Application",
+            "template": "http",
+            "serviceMain": {
+               "class": "Service_HTTP",
+               "virtualAddresses": [
+                  "{{ vip }}"
+               ],
+               "pool": "web_pool"
+            },
+            "web_pool": {
+               "class": "Pool",
+               "monitors": [
+                  "http"
+               ],
+               "members": [{
+                  "servicePort": 80,
+                  "serverAddresses": [
+{% for addr in memberAddr %}
+              "{{ addr }}"{% if loop.last %}{% else %},{% endif%}
+{% endfor %}
+                  ]
+               }]
+            }
+         }
+      }
+   }
+}
