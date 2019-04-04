@@ -47,6 +47,28 @@
           member_addr:
             - "10.10.10.228"
             - "10.10.10.229"
+        - name: "as3_http_expert"
+          template: "HTTP_expert"
+          vip: "10.128.10.24"
+          monitorPath: "/f5/index.php"
+          slowRampTime: 100
+          minimumMembersActive: 1
+          loadBalancingMode: "round-robin"
+          member:
+            - port: 80
+              connectionLimit: 0
+              priorityGroup: 0
+              adminState: "disable" 
+              addr:
+                - "10.10.10.221"
+                - "10.10.10.222"
+            - port: 80
+              connectionLimit: 10
+              priorityGroup: 1
+              adminState: "enable"
+              addr:
+                - "10.10.10.223"
+                - "10.10.10.224"
 
 
 ## don't touch: ##

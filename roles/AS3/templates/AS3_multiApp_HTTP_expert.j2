@@ -1,0 +1,34 @@
+      "{{ item.name }}" : {
+          "class": "Application",
+          "template": "http",
+          "serviceMain": {
+             "class": "Service_HTTP",
+             "virtualAddresses": [
+                "{{ item.vip }}"
+             ],
+             "pool": "web_pool"
+          },
+          "web_pool": {
+             "class": "Pool",
+             "monitors": [
+                "http"
+             ],
+             "loadBalancingMode": "{{ item.loadBalancingMode }}",
+             "minimumMembersActive": {{ item.minimumMembersActive }},
+             "slowRampTime": {{ item.slowRampTime }},
+             "members": [
+{% for group in item.member %}
+               {
+                "servicePort": {{ group.port }},
+                "connectionLimit": {{ group.connectionLimit }},
+                "priorityGroup": {{ group.priorityGroup }},
+                "adminState": "{{ group.adminState }}",
+                "serverAddresses": [
+   {% for addr in group.addr %}
+              "{{ addr }}"{% if loop.last %}{% else %},{% endif%}
+   {% endfor %}
+                ]
+             }{% if loop.last %}{% else %},{% endif%}
+{% endfor %}]
+          }
+      }
