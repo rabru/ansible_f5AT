@@ -2,12 +2,8 @@
 - name: AS3 http setup 
   hosts: "{{ target }}"
   gather_facts: false
-  vars:
-    username: "admin"
-    password: "admin"
 
   tasks:
-
 
   - name: get auth token
     uri:
@@ -26,7 +22,6 @@
       validate_certs: no
     register: auth
     delegate_to: localhost
-
 
 
 # Add or update Application Service

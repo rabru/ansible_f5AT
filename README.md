@@ -40,7 +40,7 @@ If you got git available, the easiest way would be to clone it:
 An alternative way would be to download the zip file and unpack it on the target system.
 
 ## Configuration Setup
-Next you need to adapt the settings to your environment.
+Next you need to adapt the settings regarding your environment.
 
 ### Adapt the hosts file
 
@@ -91,4 +91,128 @@ To remove the extension from the BIG-IP, you need to change the state to absent:
 # ansible-playbook playbooks/AS3_install.yaml -e target=bigip -e state=absent
 ```
 
+## File based Ansible integration over REST
+
+In this example of an AS3 deployment, we simply use a json file with the complete configuration, which we will send over REST towards the target system. Here you need to adapt the related json file, which requires some basic AS3 knowledge:
+
+```
+# cat playbooks/files/http_simple.json
+{
+   "class": "AS3",
+   "action": "deploy",
+   "persist": true,
+   "declaration": {
+      "class": "ADC",
+      "schemaVersion": "3.0.0",
+      "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
+      "label": "Sample 1",
+      "remark": "Simple HTTP application with RR pool",
+      "Sample_01": {
+         "class": "Tenant",
+         "A1": {
+            "class": "Application",
+            "template": "http",
+            "serviceMain": {
+               "class": "Service_HTTP",
+               "virtualAddresses": [
+                  "10.128.10.101"
+               ],
+               "pool": "web_pool"
+            },
+            "web_pool": {
+               "class": "Pool",
+               "monitors": [
+                  "http"
+               ],
+               "members": [{
+                  "servicePort": 80,
+                  "serverAddresses": [
+                     "10.10.10.210",
+                     "10.10.10.211"
+                  ]
+               }]
+            }
+         }
+      }
+   }
+}
+
+```
+
+Additional you should have a look at the json file for the remove request:
+```
+# cat playbooks/files/remove_http_simple.json
+{
+   "class": "AS3",
+   "action": "deploy",
+   "persist": true,
+   "declaration": {
+      "class": "ADC",
+      "schemaVersion": "3.0.0",
+      "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
+      "label": "Sample 1",
+      "remark": "Simple HTTP application with RR pool",
+      "Sample_01": {
+         "class": "Tenant"
+      }
+   }
+}
+
+```
+
+You can start the deployment with the following command line:
+
+```
+# ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=present
+```
+
+And remove the configuration like this:
+
+```
+# ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=absent
+```
+
+
+## Template based Ansible integration over REST
+
+This integration based on a [Jinja2](http://jinja.pocoo.org/) template, which enable you to abstract some settings into the playbook. The main advantage of this method is, that the DevOps user doesn't need to understand the AS3 json syntax. it is enough to adapt the variable in the playbook:
+```
+# cat playbooks/AS3_http_simple_temp_REST.yaml | head -n20
+---
+- name: AS3 http setup
+  hosts: "{{ target }}"
+  gather_facts: false
+  vars:
+    username: "admin"
+    password: "admin"
+    tenant: "myTenant"
+    appName: "httpApp"
+    vip: "10.128.10.102"
+    memberAddr:
+      - "10.10.10.203"
+      - "10.10.10.204"
+
+  tasks:
+
+  - name: get auth token
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/shared/authn/login
+      method: POST
+```
+
+As you can see, it is much easier to adapt the playbook to the needs of the infrastructure.
+
+Deployment:
+```
+# ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=present
+```
+
+Remove:
+```
+# ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=absent
+```
+
+## Template based Ansible integration over REST with multiply Applications
+
+This integration I did based on rules. I will document this later.
 
