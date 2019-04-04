@@ -2,6 +2,6 @@
 10.10.86.22 username="admin" password="admin"
 
 [bigip-ha]
-10.10.86.30
-10.10.86.31
+10.10.86.30 username="admin" password="admin"
+10.10.86.31 username="admin" password="admin"
 

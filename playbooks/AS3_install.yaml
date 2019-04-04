@@ -1,0 +1,24 @@
+---
+- name: AS3 http setup 
+  hosts: "{{ target }}"
+  gather_facts: false
+  vars:
+    AS3Version: "3.5.1-5"
+    provider:
+      server: "{{ inventory_hostname }}"
+      server_port: "443"
+      user: "{{ username }}"
+      password: "{{ password }}"
+      validate_certs: "no"
+
+  tasks:
+
+  - name: Manage AS3 externsion version {{ AS3Version }}
+    bigip_iapplx_package:
+      provider: "{{ provider }}"
+      package: "files/f5-appsvcs-{{ AS3Version }}.noarch.rpm"
+      state: "{{ state }}" 
+    delegate_to: localhost
+
+
+...    
