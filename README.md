@@ -34,7 +34,7 @@ Version: 3.0.20
 If you got git available, the easiest way would be to clone it:
 
 ```
-# git clone git@github.com:rabru/ansible_f5AT.git
+# git clone https://github.com/rabru/ansible_f5AT.git
 ```
 
 An alternative way would be to download the zip file and unpack it on the target system.
@@ -64,17 +64,17 @@ Here you can find the [AS3 documentation.](https://clouddocs.f5.com/products/ext
 
 ### Install AS3 Extension
 
-Before we can install the AS3 extension at the BIG-IP, we need to download the install package. You can find the extension [here](https://github.com/F5Networks/f5-appsvcs-extension). At the dist path you will find the latest and the Long Time Supported version.
+Before we can install the AS3 extension at the BIG-IP, we need to download the install package. You can find the extension [here](https://github.com/F5Networks/f5-appsvcs-extension/releases). 
 
 Be aware, that the path will change over time:
 ```
 # cd playbooks/files/
 
 Long Time Supported version:
-# wget https://github.com/F5Networks/f5-appsvcs-extension/raw/master/dist/lts/f5-appsvcs-3.5.1-5.noarch.rpm
+# wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.13.2/f5-appsvcs-3.13.2-1.noarch.rpm
 
 Latest version:
-# wget https://github.com/F5Networks/f5-appsvcs-extension/raw/master/dist/latest/f5-appsvcs-3.9.0-3.noarch.rpm
+# wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.19.0/f5-appsvcs-3.19.0-4.noarch.rpm
 ```
 
 Please adapt the AS3Version variable at the playbook/AS3_install.yaml playbook.
