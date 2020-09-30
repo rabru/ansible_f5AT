@@ -88,12 +88,12 @@
 
   - name: "Track deployment of {{ appName }} of tanent {{ tenant }}"
     uri:
-      url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/appsvcs/task/{{ task_id }}?async=true
+      url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/appsvcs/task/{{ task_id }}
       method: GET
       headers:
         X-F5-Auth-Token: "{{auth.json.token.token}}"
       force_basic_auth: no
-      status_code: 200,202
+      status_code: 200
       validate_certs: no
     delegate_to: localhost
     register: deplState
