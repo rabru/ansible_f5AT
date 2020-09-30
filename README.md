@@ -39,6 +39,15 @@ If you got git available, the easiest way would be to clone it:
 
 An alternative way would be to download the zip file and unpack it on the target system.
 
+## Install f5 collection
+
+You need to go into the demo folder and install the collection:
+
+```
+cd ansible_f5AT
+ansible-galaxy collection install f5networks.f5_modules
+```
+
 ## Configuration Setup
 Next you need to adapt the settings regarding your environment.
 
