@@ -81,15 +81,12 @@ Here you can find the [AS3 documentation.](https://clouddocs.f5.com/products/ext
 
 Before we can install the AS3 extension at the BIG-IP, we need to download the install package. You can find the extension [here](https://github.com/F5Networks/f5-appsvcs-extension/releases). 
 
-Be aware, that the path will change over time:
+Be aware, that the path may change over time:
 ```
-# cd playbooks/files/
+cd playbooks/files/
 
-Long Time Supported version:
-# wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.13.2/f5-appsvcs-3.13.2-1.noarch.rpm
-
-Latest version:
-# wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.19.0/f5-appsvcs-3.19.0-4.noarch.rpm
+# Latest version:
+wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.22.1/f5-appsvcs-3.22.1-1.noarch.rpm
 ```
 
 Please adapt the AS3Version variable at the playbook/AS3_install.yaml playbook.
