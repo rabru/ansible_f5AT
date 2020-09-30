@@ -1,7 +1,7 @@
 [bigip]
-10.10.86.22 username="admin" password="admin"
+10.10.86.22 username="admin" password="admin" server_port="443"
 
 [bigip-ha]
-10.10.86.30 username="admin" password="admin"
-10.10.86.31 username="admin" password="admin"
+10.10.86.30 username="admin" password="admin" server_port="443"
+10.10.86.31 username="admin" password="admin" server_port="443"
 
