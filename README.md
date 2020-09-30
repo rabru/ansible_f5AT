@@ -48,6 +48,12 @@ cd ansible_f5AT
 ansible-galaxy collection install f5networks.f5_modules
 ```
 
+To validate the installed version use:
+
+```
+ansible-galaxy collection list
+```
+
 ## Configuration Setup
 Next you need to adapt the settings regarding your environment.
 
