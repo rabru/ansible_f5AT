@@ -16,7 +16,7 @@
 
   - name: get auth token
     uri:
-      url: https://{{ inventory_hostname }}/mgmt/shared/authn/login
+      url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/authn/login
       method: POST
       user: "{{ username }}"
       password: "{{ password }}"
@@ -39,7 +39,7 @@
 
   - name: "Update {{ appName }} of tanent {{ tenant }}"
     uri:
-      url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+      url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/appsvcs/declare
       method: POST
       headers:
         X-F5-Auth-Token: "{{auth.json.token.token}}"
@@ -56,7 +56,7 @@
 ############################
   - name: Remove all Applications of tenant {{ tenant }}
     uri:
-      url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+      url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/appsvcs/declare
       method: POST
       headers:
         X-F5-Auth-Token: "{{auth.json.token.token}}"
