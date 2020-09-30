@@ -5,7 +5,7 @@
 
 - name: get auth token
   uri:
-    url: https://{{ inventory_hostname }}/mgmt/shared/authn/login
+    url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/authn/login
     method: POST
     user: "{{ username }}"
     password: "{{ password }}"
@@ -73,7 +73,7 @@
 ############################
 - name: Remove all Appilications
   uri:
-    url: https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare
+    url: https://{{ inventory_hostname }}:{{ server_port }}/mgmt/shared/appsvcs/declare
     method: POST
     headers:
       X-F5-Auth-Token: "{{auth.json.token.token}}"
