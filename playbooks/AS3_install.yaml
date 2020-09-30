@@ -6,7 +6,7 @@
     AS3Version: "3.5.1-5"
     provider:
       server: "{{ inventory_hostname }}"
-      server_port: "443"
+      server_port: "{{ server_port }}"
       user: "{{ username }}"
       password: "{{ password }}"
       validate_certs: "no"
