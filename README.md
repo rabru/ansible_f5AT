@@ -195,8 +195,6 @@ This integration based on a [Jinja2](http://jinja.pocoo.org/) template, which en
   hosts: "{{ target }}"
   gather_facts: false
   vars:
-    username: "admin"
-    password: "admin"
     tenant: "myTenant"
     appName: "httpApp"
     vip: "10.128.10.102"
