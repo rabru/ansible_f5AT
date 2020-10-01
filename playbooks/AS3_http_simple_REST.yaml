@@ -37,6 +37,7 @@
       force_basic_auth: no
       status_code: 200,202
       body_format: json
+      timeout: 180
       validate_certs: no
     delegate_to: localhost
     when: state == "present"
@@ -54,6 +55,7 @@
       force_basic_auth: no
       status_code: 200,202
       body_format: json
+      timeout: 180
       validate_certs: no
     delegate_to: localhost
     when: state == "absent"
