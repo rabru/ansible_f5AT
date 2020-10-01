@@ -20,13 +20,13 @@ pip install f5-sdk
 I tested the Demo with the following Versions:
 
 ```
-# python --version
-Python 2.7.9
-# ansible --version
-ansible 2.7.7
-# pip show f5-sdk
-Name: f5-sdk
-Version: 3.0.20
+python --version
+#> Python 2.7.9
+ansible --version
+#> ansible 2.7.7
+pip show f5-sdk
+#> Name: f5-sdk
+#> Version: 3.0.20
 ```
 
 ## Install the demo
@@ -34,7 +34,7 @@ Version: 3.0.20
 If you got git available, the easiest way would be to clone it:
 
 ```
-# git clone https://github.com/rabru/ansible_f5AT.git
+git clone https://github.com/rabru/ansible_f5AT.git
 ```
 
 An alternative way would be to download the zip file and unpack it on the target system.
@@ -64,13 +64,14 @@ You need to adapt the host setting at the hosts file. The easiest way would be t
 It is highly recommended to put the passwords into an ansible vault. To keep this demo as simple as possible I put it into the hosts file.
 
 ```
-# cat hosts
+cat hosts
+# output:
 [bigip]
-10.10.86.22 username="admin" password="admin"
+10.10.86.22 username="admin" password="admin" server_port="443"
 
 [bigip-ha]
-10.10.86.30 username="admin" password="admin"
-10.10.86.31 username="admin" password="admin"
+10.10.86.30 username="admin" password="admin" server_port="443"
+10.10.86.31 username="admin" password="admin" server_port="443"
 
 ```
 
@@ -85,22 +86,21 @@ Be aware, that the path may change over time:
 ```
 cd playbooks/files/
 
-# Latest version:
 wget https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.22.1/f5-appsvcs-3.22.1-1.noarch.rpm
 ```
 
 Please adapt the AS3Version variable at the playbook/AS3_install.yaml playbook.
 
-Next you can install the package on the target BIG-IP:
+Next you can install the package on the target BIG-IP. Please make sure, that rpm is available on your ansible host!:
 
 ```
-# ansible-playbook playbooks/AS3_install.yaml -e target=bigip -e state=present
+ansible-playbook playbooks/AS3_install.yaml -e target=bigip -e state=present
 ```
 
 To remove the extension from the BIG-IP, you need to change the state to absent:
 
 ```
-# ansible-playbook playbooks/AS3_install.yaml -e target=bigip -e state=absent
+ansible-playbook playbooks/AS3_install.yaml -e target=bigip -e state=absent
 ```
 
 ## File based Ansible integration over REST
@@ -108,7 +108,8 @@ To remove the extension from the BIG-IP, you need to change the state to absent:
 In this example of an AS3 deployment, we simply use a json file with the complete configuration, which we will send over REST towards the target system. Here you need to adapt the related json file, which requires some basic AS3 knowledge:
 
 ```
-# cat playbooks/files/http_simple.json
+cat playbooks/files/http_simple.json
+#output:
 {
    "class": "AS3",
    "action": "deploy",
@@ -153,7 +154,8 @@ In this example of an AS3 deployment, we simply use a json file with the complet
 
 Additional you should have a look at the json file for the remove request:
 ```
-# cat playbooks/files/remove_http_simple.json
+cat playbooks/files/remove_http_simple.json
+# output:
 {
    "class": "AS3",
    "action": "deploy",
@@ -175,13 +177,13 @@ Additional you should have a look at the json file for the remove request:
 You can start the deployment with the following command line:
 
 ```
-# ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=present
+ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=present
 ```
 
 And remove the configuration like this:
 
 ```
-# ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=absent
+ansible-playbook playbooks/AS3_http_simple_REST.yaml -e target=bigip -e state=absent
 ```
 
 
@@ -189,7 +191,8 @@ And remove the configuration like this:
 
 This integration based on a [Jinja2](http://jinja.pocoo.org/) template, which enable you to abstract some settings into the playbook. The main advantage of this method is, that the DevOps user doesn't need to understand the AS3 json syntax. it is enough to adapt the variable in the playbook:
 ```
-# cat playbooks/AS3_http_simple_temp_REST.yaml | head -n20
+cat playbooks/AS3_http_simple_temp_REST.yaml | head -n20
+# output:
 ---
 - name: AS3 http setup
   hosts: "{{ target }}"
@@ -214,12 +217,12 @@ As you can see, it is much easier to adapt the playbook to the needs of the infr
 
 Deployment:
 ```
-# ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=present
+ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=present
 ```
 
 Remove:
 ```
-# ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=absent
+ansible-playbook playbooks/AS3_http_simple_temp_REST.yaml -e target=bigip -e state=absent
 ```
 
 ## Template based Ansible integration over REST with multiply Applications
